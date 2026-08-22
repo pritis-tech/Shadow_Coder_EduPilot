@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Flame, Sparkles, Target, TrendingUp } from "lucide-react";
+import { ArrowRight, Clock, Flame, GraduationCap, Sparkles, Target, TrendingUp, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { CardSkeletons, EmptyState, MasteryBar, StatusBadge } from "@/components/ui-states";
 import {
   daysUntil,
@@ -11,6 +12,7 @@ import {
   useQuizResults,
   useTopicProgress,
 } from "@/lib/data";
+import { useExamDashboard } from "@/lib/exam-planner-data";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -30,6 +32,7 @@ function Dashboard() {
   const { data: progress = [], isLoading: loadingProgress } = useTopicProgress();
   const { data: quizzes = [] } = useQuizResults(10);
   const { data: plan } = useLatestPlan();
+  const { data: examDashboard } = useExamDashboard();
 
   const loading = loadingAssessment || loadingProgress;
 
@@ -141,6 +144,53 @@ function Dashboard() {
           </Button>
         </div>
       </section>
+
+      {/* Exam Mastery Planner Widget */}
+      {examDashboard?.exam && (
+        <section className="surface border-primary/40 bg-gradient-to-r from-primary/5 via-card to-card p-6 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <GraduationCap className="size-5 text-primary" />
+              <h2 className="text-sm font-bold text-foreground">
+                Exam Mastery Planner · {examDashboard.exam.name}
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs font-mono border-primary/40 text-primary bg-primary/10">
+                <Clock className="size-3 mr-1 inline" />
+                {examDashboard.days_until_exam === 0 ? "TODAY!" : `${examDashboard.days_until_exam} DAYS LEFT`}
+              </Badge>
+              {examDashboard.has_pyq_data ? (
+                <Badge variant="default" className="text-xs bg-primary/20 text-primary border border-primary/40">
+                  PYQ Insights
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="text-xs">
+                  Syllabus Plan
+                </Badge>
+              )}
+              <Button asChild size="sm" variant="outline">
+                <Link to="/exam-planner">Open Planner →</Link>
+              </Button>
+            </div>
+          </div>
+
+          {examDashboard.study_now && (
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs bg-secondary/50 p-3 rounded-md border border-border">
+              <div className="space-y-0.5">
+                <span className="font-bold text-primary">Top Exam Focus: </span>
+                <span className="font-semibold text-foreground">{examDashboard.study_now.topic} </span>
+                <span className="text-muted-foreground">({examDashboard.study_now.reason})</span>
+              </div>
+              <Button asChild size="sm">
+                <Link to="/socratic" search={{ topic: examDashboard.study_now.topic }}>
+                  <Sparkles className="size-3 mr-1" /> Study Now
+                </Link>
+              </Button>
+            </div>
+          )}
+        </section>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="surface p-6">

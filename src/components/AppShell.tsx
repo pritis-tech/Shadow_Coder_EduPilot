@@ -22,8 +22,9 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/roadmap", label: "Roadmap", icon: Compass },
+  { to: "/exam-planner", label: "Exam Planner", icon: GraduationCap },
   { to: "/socratic", label: "Socratic Arena", icon: Sparkles },
+  { to: "/roadmap", label: "Roadmap", icon: Compass },
   { to: "/tutor", label: "AI Tutor", icon: MessageSquareText },
   { to: "/quiz", label: "Mini Quiz", icon: Target },
   { to: "/progress", label: "Progress", icon: BarChart3 },

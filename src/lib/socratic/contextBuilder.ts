@@ -118,6 +118,19 @@ export function formatContextForPrompt(ctx: SocraticContext): string {
     );
   }
 
+  if (ctx.examContext) {
+    parts.push(
+      `Upcoming Target Exam: "${ctx.examContext.examName || "Target Exam"}" (${ctx.examContext.unitName ? `Unit: ${ctx.examContext.unitName}, ` : ""}Priority: ${ctx.examContext.priorityTier?.toUpperCase() || "HIGH"})`,
+    );
+    if (ctx.examContext.relevantPyqs && ctx.examContext.relevantPyqs.length > 0) {
+      parts.push(
+        `Relevant Previous-Year Exam Questions (PYQs): ${ctx.examContext.relevantPyqs
+          .map((p) => `[${p.year}${p.marks ? `, ${p.marks}M` : ""}] "${p.question}"`)
+          .join("; ")}`,
+      );
+    }
+  }
+
   parts.push(`Target Question: "${ctx.question}"`);
   parts.push(`Student Answer: "${ctx.studentAnswer}"`);
   parts.push(`Student Reasoning: "${ctx.studentReasoning}"`);

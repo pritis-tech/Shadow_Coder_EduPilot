@@ -299,6 +299,255 @@ export type Database = {
         }
         Relationships: []
       }
+      exams: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          subject: string
+          exam_date: string
+          target_score: number | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          subject: string
+          exam_date: string
+          target_score?: number | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          subject?: string
+          exam_date?: string
+          target_score?: number | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      uploaded_documents: {
+        Row: {
+          id: string
+          exam_id: string
+          user_id: string
+          file_name: string
+          file_type: string
+          pyq_year: number | null
+          extracted_text: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          exam_id: string
+          user_id: string
+          file_name: string
+          file_type: string
+          pyq_year?: number | null
+          extracted_text?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          exam_id?: string
+          user_id?: string
+          file_name?: string
+          file_type?: string
+          pyq_year?: number | null
+          extracted_text?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      syllabus_topics: {
+        Row: {
+          id: string
+          exam_id: string
+          user_id: string
+          unit_name: string
+          chapter_name: string | null
+          topic: string
+          subtopics: Json
+          weightage: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          exam_id: string
+          user_id: string
+          unit_name?: string
+          chapter_name?: string | null
+          topic: string
+          subtopics?: Json
+          weightage?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          exam_id?: string
+          user_id?: string
+          unit_name?: string
+          chapter_name?: string | null
+          topic?: string
+          subtopics?: Json
+          weightage?: number | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      pyq_questions: {
+        Row: {
+          id: string
+          exam_id: string
+          user_id: string
+          year: number
+          question_text: string
+          marks: number | null
+          question_type: string
+          mapped_topic: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          exam_id: string
+          user_id: string
+          year: number
+          question_text: string
+          marks?: number | null
+          question_type?: string
+          mapped_topic?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          exam_id?: string
+          user_id?: string
+          year?: number
+          question_text?: string
+          marks?: number | null
+          question_type?: string
+          mapped_topic?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      topic_pyq_analysis: {
+        Row: {
+          id: string
+          exam_id: string
+          user_id: string
+          topic: string
+          unit_name: string | null
+          pyq_count: number
+          years_appeared: Json
+          repeat_pattern: string
+          priority: string
+          priority_reason: string
+          evidence: Json
+          estimated_difficulty: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          exam_id: string
+          user_id: string
+          topic: string
+          unit_name?: string | null
+          pyq_count?: number
+          years_appeared?: Json
+          repeat_pattern?: string
+          priority?: string
+          priority_reason?: string
+          evidence?: Json
+          estimated_difficulty?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          exam_id?: string
+          user_id?: string
+          topic?: string
+          unit_name?: string | null
+          pyq_count?: number
+          years_appeared?: Json
+          repeat_pattern?: string
+          priority?: string
+          priority_reason?: string
+          evidence?: Json
+          estimated_difficulty?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      student_topic_selections: {
+        Row: {
+          id: string
+          exam_id: string
+          user_id: string
+          topic: string
+          selected: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          exam_id: string
+          user_id: string
+          topic: string
+          selected?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          exam_id?: string
+          user_id?: string
+          topic?: string
+          selected?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      exam_study_plans: {
+        Row: {
+          id: string
+          exam_id: string
+          user_id: string
+          days_until_exam: number
+          plan_schedule: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          exam_id: string
+          user_id: string
+          days_until_exam?: number
+          plan_schedule?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          exam_id?: string
+          user_id?: string
+          days_until_exam?: number
+          plan_schedule?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

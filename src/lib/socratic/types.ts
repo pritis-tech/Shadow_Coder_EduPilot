@@ -129,6 +129,12 @@ export type SocraticContext = {
     category: string;
     frequency: number;
   }> | undefined;
+  examContext?: {
+    examName?: string | undefined;
+    unitName?: string | undefined;
+    relevantPyqs?: Array<{ year: number; question: string; marks?: number | null | undefined }> | undefined;
+    priorityTier?: string | undefined;
+  } | undefined;
 };
 
 export type InstructorAnalyticsData = {

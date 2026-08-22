@@ -2,6 +2,11 @@
 -- Socratic Challenge System & Misconception Tracking Migration
 -- ====================================================================
 
+-- Ensure helper function exists
+CREATE OR REPLACE FUNCTION public.set_updated_at()
+RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public AS $$
+BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
+
 -- 1. Socratic Sessions Table
 CREATE TABLE IF NOT EXISTS public.socratic_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -31,6 +36,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.socratic_sessions TO authenticate
 GRANT ALL ON public.socratic_sessions TO service_role;
 ALTER TABLE public.socratic_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users manage own socratic sessions" ON public.socratic_sessions;
 CREATE POLICY "Users manage own socratic sessions" 
 ON public.socratic_sessions 
 FOR ALL 
@@ -42,10 +48,10 @@ CREATE INDEX IF NOT EXISTS socratic_sessions_user_topic_idx ON public.socratic_s
 CREATE INDEX IF NOT EXISTS socratic_sessions_created_idx ON public.socratic_sessions (created_at DESC);
 
 -- Trigger for updated_at on socratic_sessions
+DROP TRIGGER IF EXISTS socratic_sessions_updated_at ON public.socratic_sessions;
 CREATE TRIGGER socratic_sessions_updated_at 
 BEFORE UPDATE ON public.socratic_sessions 
 FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
-
 
 -- 2. Student Misconceptions Tracking Table
 CREATE TABLE IF NOT EXISTS public.student_misconceptions (
@@ -68,6 +74,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_misconceptions TO authent
 GRANT ALL ON public.student_misconceptions TO service_role;
 ALTER TABLE public.student_misconceptions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users manage own misconceptions" ON public.student_misconceptions;
 CREATE POLICY "Users manage own misconceptions" 
 ON public.student_misconceptions 
 FOR ALL 
@@ -77,3 +84,6 @@ WITH CHECK (auth.uid() = user_id);
 
 CREATE INDEX IF NOT EXISTS student_misconceptions_user_topic_idx ON public.student_misconceptions (user_id, topic, resolved);
 CREATE INDEX IF NOT EXISTS student_misconceptions_topic_resolved_idx ON public.student_misconceptions (topic, resolved);
+
+-- Force reload of PostgREST schema cache
+NOTIFY pgrst, 'reload schema';
