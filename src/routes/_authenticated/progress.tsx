@@ -103,12 +103,12 @@ function ProgressPage() {
               <div key={m.id} className="py-3 flex flex-wrap items-center justify-between gap-3 text-sm">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-foreground">{m.topic}</span>
-                    <Badge variant="outline" className="text-xs font-mono border-destructive/40 text-destructive bg-destructive/10">
+                    <span className="font-semibold text-foreground">{m.topic}</span>
+                    <Badge variant="outline" className="text-xs font-mono border-rose-300 bg-rose-50 text-rose-800 dark:border-destructive/40 dark:text-destructive dark:bg-destructive/10">
                       {m.category.replace("_", " ")}
                     </Badge>
                   </div>
-                  <p className="mt-1 text-xs text-destructive">⚠️ "{m.misconception}"</p>
+                  <p className="mt-1 text-xs text-rose-700 dark:text-destructive font-medium">⚠️ "{m.misconception}"</p>
                 </div>
                 <Button size="sm" variant="ghost" asChild>
                   <Link to="/socratic" search={{ topic: m.topic }}>
@@ -118,12 +118,12 @@ function ProgressPage() {
               </div>
             ))}
             {resolvedMisconceptions.map((m) => (
-              <div key={m.id} className="py-3 flex items-center justify-between gap-3 text-sm opacity-70">
+              <div key={m.id} className="py-3 flex items-center justify-between gap-3 text-sm opacity-75">
                 <div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-success" />
-                    <span className="font-medium text-foreground">{m.topic}</span>
-                    <Badge variant="outline" className="text-xs text-success border-success/40 bg-success/10">
+                    <CheckCircle2 className="size-4 text-emerald-600 dark:text-success" />
+                    <span className="font-semibold text-foreground">{m.topic}</span>
+                    <Badge variant="outline" className="text-xs border-emerald-300 bg-emerald-50 text-emerald-800 dark:text-success dark:border-success/40 dark:bg-success/10">
                       Resolved
                     </Badge>
                   </div>
@@ -137,15 +137,15 @@ function ProgressPage() {
 
       {/* Topic Mastery */}
       <section className="surface p-6">
-        <h2 className="text-sm font-semibold">Topic mastery</h2>
+        <h2 className="text-base font-bold text-foreground">Topic mastery</h2>
         <div className="mt-5 space-y-5">
           {progress.map((p) => (
             <div key={p.id}>
               <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2 text-sm">
-                <span className="font-medium">{p.topic}</span>
+                <span className="font-semibold text-foreground">{p.topic}</span>
                 <div className="flex items-center gap-2">
                   <StatusBadge mastery={Number(p.mastery_score)} status={p.status} />
-                  <span className="text-muted-foreground">{Math.round(Number(p.mastery_score))}%</span>
+                  <span className="font-bold text-foreground">{Math.round(Number(p.mastery_score))}%</span>
                 </div>
               </div>
               <MasteryBar value={Number(p.mastery_score)} />
@@ -154,7 +154,7 @@ function ProgressPage() {
                   {p.attempts} attempt{p.attempts === 1 ? "" : "s"}
                   {p.last_score !== null ? ` · last score ${Math.round(Number(p.last_score))}%` : ""}
                 </span>
-                <Link to="/socratic" search={{ topic: p.topic }} className="text-primary hover:underline">
+                <Link to="/socratic" search={{ topic: p.topic }} className="font-semibold text-primary hover:text-primary-hover hover:underline">
                   Socratic Interrogate →
                 </Link>
               </div>
@@ -168,20 +168,20 @@ function ProgressPage() {
         <section className="surface p-6">
           <div className="flex items-center gap-2">
             <History className="size-5 text-primary" />
-            <h2 className="text-sm font-semibold">Recent Socratic Defense History</h2>
+            <h2 className="text-base font-bold text-foreground">Recent Socratic Defense History</h2>
           </div>
           <ul className="mt-4 divide-y divide-border">
             {socraticHistory.slice(0, 6).map((s) => (
               <li key={s.id} className="py-3 text-sm space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{s.topic} ({s.challenge_type})</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">{s.topic} ({s.challenge_type})</span>
+                  <span className="text-xs font-medium text-muted-foreground">
                     Mastery: {s.mastery_before}% → {s.mastery_after}%
                   </span>
                 </div>
                 {s.challenge && <p className="text-xs text-muted-foreground line-clamp-1 font-mono">Challenge: {s.challenge}</p>}
                 {s.defense_evaluation && (
-                  <p className="text-xs text-success line-clamp-1">
+                  <p className="text-xs text-emerald-700 dark:text-success line-clamp-1 font-medium">
                     Defense: {s.defense_evaluation.defense_quality}% · {s.defense_evaluation.feedback}
                   </p>
                 )}
@@ -193,7 +193,7 @@ function ProgressPage() {
 
       {/* Quiz History */}
       <section className="surface p-6">
-        <h2 className="text-sm font-semibold">Quiz history</h2>
+        <h2 className="text-base font-bold text-foreground">Quiz history</h2>
         {chartData.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">Take a mini quiz to start building your history.</p>
         ) : (
@@ -206,11 +206,16 @@ function ProgressPage() {
                   <YAxis domain={[0, 100]} stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
                   <Tooltip
                     contentStyle={{
-                      background: "var(--color-card)",
-                      border: "1px solid var(--color-border)",
-                      borderRadius: "0.5rem",
+                      backgroundColor: "var(--color-card)",
+                      borderColor: "var(--color-border)",
+                      color: "var(--color-foreground)",
+                      borderRadius: "0.75rem",
+                      boxShadow: "var(--shadow-card)",
                       fontSize: "12px",
+                      fontWeight: "600",
                     }}
+                    itemStyle={{ color: "var(--color-foreground)" }}
+                    labelStyle={{ color: "var(--color-muted-foreground)", fontWeight: "500" }}
                     formatter={(value: number, _n, item) => [`${value}%`, item.payload.topic]}
                   />
                   <Line

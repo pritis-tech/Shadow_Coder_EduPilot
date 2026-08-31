@@ -32,3 +32,6 @@ dist-ssr
 *.sw?
 .env
 scratch/
+
+# Local Netlify folder
+.netlify

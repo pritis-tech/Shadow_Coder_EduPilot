@@ -170,14 +170,14 @@ function Quiz() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-bold sm:text-3xl">Mini Quiz</h1>
+      <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">Mini Quiz</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         A short mastery check. Your result updates your topic mastery and your next recommendation.
       </p>
 
       <div className="surface mt-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-end">
         <div className="flex-1 space-y-2">
-          <label className="text-sm font-medium">Topic</label>
+          <label className="text-sm font-semibold text-foreground">Topic</label>
           <Select
             value={topic}
             onValueChange={(v) => {
@@ -215,7 +215,7 @@ function Quiz() {
 
       {record && (
         <p className="mt-3 text-sm text-muted-foreground">
-          Current mastery for {record.topic}: <span className="font-medium text-foreground">{Math.round(Number(record.mastery_score))}%</span>{" "}
+          Current mastery for {record.topic}: <span className="font-bold text-foreground">{Math.round(Number(record.mastery_score))}%</span>{" "}
           · {record.attempts} attempt{record.attempts === 1 ? "" : "s"}
         </p>
       )}
@@ -227,7 +227,7 @@ function Quiz() {
           <div className="mt-6 space-y-4">
             {questions.map((q, qi) => (
               <div key={q.id} className="surface p-5">
-                <p className="text-sm font-semibold">
+                <p className="text-sm font-bold text-foreground">
                   {qi + 1}. {q.question}
                 </p>
                 <div className="mt-4 space-y-2">
@@ -239,19 +239,23 @@ function Quiz() {
                         type="button"
                         onClick={() => setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))}
                         className={cn(
-                          "flex w-full items-start gap-3 rounded-lg border border-border p-3 text-left text-sm transition-colors hover:bg-muted",
-                          selected && "border-primary bg-accent text-accent-foreground",
+                          "flex w-full items-start gap-3 rounded-xl border p-3.5 text-left text-sm transition-colors cursor-pointer",
+                          selected
+                            ? "border-primary bg-primary/10 font-semibold text-foreground ring-1 ring-primary"
+                            : "border-border bg-card hover:bg-secondary text-foreground hover:border-slate-300 dark:hover:border-slate-700",
                         )}
                       >
                         <span
                           className={cn(
-                            "grid size-5 shrink-0 place-items-center rounded-full border border-border text-[11px] font-semibold",
-                            selected && "border-primary bg-primary text-primary-foreground",
+                            "grid size-5 shrink-0 place-items-center rounded-full border text-[11px] font-semibold",
+                            selected
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border text-muted-foreground",
                           )}
                         >
                           {String.fromCharCode(65 + oi)}
                         </span>
-                        {opt}
+                        <span>{opt}</span>
                       </button>
                     );
                   })}

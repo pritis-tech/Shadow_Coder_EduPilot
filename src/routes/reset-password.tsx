@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle2, Eye, EyeOff, Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,29 +10,27 @@ import { errorMessage } from "@/lib/data";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 
-export const Route = createFileRoute("/signup")({
+export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Create your account — EduPilot" },
-      { name: "description", content: "Sign up for EduPilot and get an AI-built study roadmap in minutes." },
-      { property: "og:title", content: "Create your account — EduPilot" },
-      { property: "og:description", content: "Sign up for EduPilot and get an AI-built study roadmap in minutes." },
+      { title: "Reset Password — EduPilot" },
+      { name: "description", content: "Set a new password for your EduPilot account." },
+      { property: "og:title", content: "Reset Password — EduPilot" },
+      { property: "og:description", content: "Set a new password for your EduPilot account." },
     ],
   }),
-  component: SignupPage,
+  component: ResetPasswordPage,
 });
 
-export function SignupPage() {
+export function ResetPasswordPage() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [backendError, setBackendError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const passwordMismatch = confirmPassword.length > 0 && password !== confirmPassword;
   const isPasswordTooShort = password.length > 0 && password.length < 6;
@@ -41,24 +39,10 @@ export function SignupPage() {
     e.preventDefault();
     setBackendError(null);
 
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
-
-    if (!trimmedName) {
-      toast.error("Please enter your full name.");
-      return;
-    }
-
-    if (!trimmedEmail || !trimmedEmail.includes("@")) {
-      toast.error("Please provide a valid email address.");
-      return;
-    }
-
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters.");
       return;
     }
-
     if (password !== confirmPassword) {
       toast.error("Passwords do not match.");
       return;
@@ -67,33 +51,18 @@ export function SignupPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: trimmedEmail,
-        password,
-        options: {
-          ...(typeof window !== "undefined" ? { emailRedirectTo: window.location.origin } : {}),
-          data: { name: trimmedName },
-        },
-      });
-
+      const { error } = await supabase.auth.updateUser({ password });
       setLoading(false);
 
       if (error) {
-        // Do NOT hide the backend error; display it cleanly to the user
-        const errorMsg = errorMessage(error, "Could not create your account.");
+        const errorMsg = errorMessage(error, "Could not update your password.");
         setBackendError(errorMsg);
         toast.error(errorMsg);
         return;
       }
 
-      if (!data.session) {
-        setSent(true);
-        toast.success("Verification link sent to your email.");
-        return;
-      }
-
-      toast.success("Account created successfully!");
-      navigate({ to: "/onboarding", replace: true });
+      setSuccess(true);
+      toast.success("Password updated successfully!");
     } catch (err: unknown) {
       setLoading(false);
       const errorMsg = errorMessage(err, "An unexpected server error occurred.");
@@ -104,22 +73,22 @@ export function SignupPage() {
 
   return (
     <AuthLayout
-      title={sent ? "Check your email" : "Create your account"}
+      title={success ? "Password Updated" : "Set New Password"}
       subtitle={
-        sent
-          ? `We sent a confirmation link to ${email}`
-          : "Start with an AI diagnostic and personalized study roadmap."
+        success
+          ? "Your account password has been updated successfully."
+          : "Please choose a strong password to protect your account."
       }
     >
-      {sent ? (
+      {success ? (
         <div className="space-y-6 text-center animate-in fade-in zoom-in-95 duration-200">
-          <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 text-primary shadow-inner">
-            <Mail className="size-8" />
+          <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-success/10 border border-success/20 text-success shadow-inner">
+            <CheckCircle2 className="size-8" />
           </div>
 
           <div className="rounded-xl border border-border bg-muted/40 p-4 text-xs text-muted-foreground leading-relaxed">
             <p>
-              Please confirm your email address (<span className="font-semibold text-foreground">{email}</span>), then log in to start your personalized onboarding.
+              You can now log in to your EduPilot learning space with your new password.
             </p>
           </div>
 
@@ -127,12 +96,11 @@ export function SignupPage() {
             asChild
             className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 btn-lift"
           >
-            <Link to="/login">Go to log in</Link>
+            <Link to="/login">Continue to Log in</Link>
           </Button>
         </div>
       ) : (
         <form onSubmit={onSubmit} className="space-y-4">
-          {/* Real Backend Error Banner if Supabase returns an error */}
           {backendError && (
             <div
               role="alert"
@@ -140,72 +108,25 @@ export function SignupPage() {
             >
               <AlertCircle className="size-4 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <span className="font-bold">Authentication Issue</span>
+                <span className="font-bold">Update Error</span>
                 <p className="leading-relaxed">{backendError}</p>
               </div>
             </div>
           )}
 
-          {/* Full Name */}
+          {/* New Password Field */}
           <div className="space-y-1.5 text-left">
             <Label
-              htmlFor="name"
+              htmlFor="new-password"
               className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
-              Full name
-            </Label>
-            <div className="relative">
-              <User className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="name"
-                name="name"
-                required
-                value={name}
-                autoComplete="name"
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex Kumar"
-                className="h-11 rounded-xl border-input bg-card pl-10 pr-4 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
-              />
-            </div>
-          </div>
-
-          {/* Email */}
-          <div className="space-y-1.5 text-left">
-            <Label
-              htmlFor="email"
-              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              Email address
-            </Label>
-            <div className="relative">
-              <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="h-11 rounded-xl border-input bg-card pl-10 pr-4 text-base sm:text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
-              />
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="space-y-1.5 text-left">
-            <Label
-              htmlFor="password"
-              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              Password
+              New Password
             </Label>
             <div className="relative">
               <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                id="password"
-                name="password"
+                id="new-password"
+                name="new-password"
                 type={showPassword ? "text" : "password"}
                 required
                 autoComplete="new-password"
@@ -229,10 +150,10 @@ export function SignupPage() {
             <PasswordStrengthIndicator password={password} />
           </div>
 
-          {/* Confirm Password */}
+          {/* Confirm Password Field */}
           <div className="space-y-1.5 text-left">
             <Label
-              htmlFor="confirmPassword"
+              htmlFor="confirm-password"
               className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
               Confirm Password
@@ -240,8 +161,8 @@ export function SignupPage() {
             <div className="relative">
               <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                id="confirmPassword"
-                name="confirmPassword"
+                id="confirm-password"
+                name="confirm-password"
                 type={showConfirmPassword ? "text" : "password"}
                 required
                 autoComplete="new-password"
@@ -262,14 +183,8 @@ export function SignupPage() {
             {passwordMismatch && (
               <p className="text-[11px] text-destructive font-medium">Passwords do not match</p>
             )}
-            {!passwordMismatch && confirmPassword.length >= 6 && password === confirmPassword && (
-              <p className="flex items-center gap-1 text-[11px] text-success font-medium">
-                <CheckCircle2 className="size-3" /> Passwords match
-              </p>
-            )}
           </div>
 
-          {/* Submit Button with Loading State */}
           <Button
             type="submit"
             disabled={loading || passwordMismatch || (password.length > 0 && password.length < 6)}
@@ -277,21 +192,19 @@ export function SignupPage() {
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" /> Creating account...
+                <Loader2 className="size-4 animate-spin" /> Updating password...
               </span>
             ) : (
-              "Create Account"
+              "Update Password"
             )}
           </Button>
 
-          {/* Login Link */}
-          <div className="pt-2 text-center text-xs sm:text-sm text-muted-foreground">
-            Already have an account?{" "}
+          <div className="pt-2 text-center">
             <Link
               to="/login"
-              className="font-semibold text-primary transition-colors hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              Log in
+              <ArrowLeft className="size-3.5" /> Back to Login
             </Link>
           </div>
         </form>

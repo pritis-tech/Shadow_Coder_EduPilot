@@ -87,7 +87,7 @@ function Roadmap() {
     <div className="mx-auto max-w-4xl">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold sm:text-3xl">Your roadmap</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">Your roadmap</h1>
           <p className="mt-1 max-w-xl text-sm text-muted-foreground">
             {plan.plan_data.summary || "Built from your diagnostic results and available study time."}
           </p>
@@ -102,24 +102,24 @@ function Roadmap() {
         {days.map((d) => {
           const mastery = masteryByTopic.get((d.topic ?? "").toLowerCase());
           return (
-            <article key={d.day} className="surface flex flex-col gap-4 p-5 sm:flex-row">
+            <article key={d.day} className="surface flex flex-col gap-4 p-5 sm:flex-row transition-all hover:border-primary/30 hover:shadow-xs">
               <div className="flex shrink-0 items-center gap-3 sm:w-28 sm:flex-col sm:items-start">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground">
+                <span className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
                   <CalendarDays className="size-3.5" /> Day {d.day}
                 </span>
                 {mastery !== undefined && (
-                  <span className="text-xs text-muted-foreground">{Math.round(mastery)}% mastery</span>
+                  <span className="text-xs font-semibold text-muted-foreground">{Math.round(mastery)}% mastery</span>
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="font-semibold">{d.topic}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">{d.focus}</p>
+                <h2 className="text-base font-bold text-foreground">{d.topic}</h2>
+                <p className="mt-1 text-sm text-secondary-foreground leading-relaxed">{d.focus}</p>
                 {(d.activities ?? []).length > 0 && (
                   <ul className="mt-3 space-y-1.5">
                     {d.activities.map((a, i) => (
                       <li key={i} className="flex gap-2 text-sm text-muted-foreground">
                         <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />
-                        {a}
+                        <span>{a}</span>
                       </li>
                     ))}
                   </ul>

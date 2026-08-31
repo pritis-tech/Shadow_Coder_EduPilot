@@ -103,7 +103,7 @@ function Tutor() {
     <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-4xl flex-col">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">AI Tutor</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">AI Tutor</h1>
           <p className="text-sm text-muted-foreground">Tuned to your {profile?.current_level ?? "current"} level.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -139,7 +139,7 @@ function Tutor() {
             <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
               <Sparkles className="size-6 text-primary" />
               <p className="max-w-sm text-sm text-muted-foreground">
-                Ask anything about <span className="font-medium text-foreground">{topic || "your topic"}</span>, or use
+                Ask anything about <span className="font-semibold text-foreground">{topic || "your topic"}</span>, or use
                 a quick action below.
               </p>
             </div>
@@ -148,8 +148,10 @@ function Tutor() {
             <div key={i} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
               <div
                 className={cn(
-                  "max-w-[85%] whitespace-pre-wrap rounded-xl px-4 py-3 text-sm leading-relaxed",
-                  m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+                  "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed",
+                  m.role === "user"
+                    ? "bg-primary text-primary-foreground font-medium shadow-xs"
+                    : "border border-border bg-secondary text-foreground",
                 )}
               >
                 {m.content}
@@ -158,8 +160,8 @@ function Tutor() {
           ))}
           {pending && (
             <div className="flex justify-start">
-              <div className="flex items-center gap-2 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-                <Loader2 className="size-4 animate-spin" /> Thinking…
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                <Loader2 className="size-4 animate-spin text-primary" /> Thinking…
               </div>
             </div>
           )}

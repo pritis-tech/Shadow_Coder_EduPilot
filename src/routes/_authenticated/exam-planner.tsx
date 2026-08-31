@@ -245,9 +245,9 @@ function ExamPlannerPage() {
         <button
           onClick={() => setActiveTab("overview")}
           className={cn(
-            "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+            "px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer",
             activeTab === "overview"
-              ? "border-primary text-primary"
+              ? "border-primary text-primary font-bold"
               : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
@@ -256,9 +256,9 @@ function ExamPlannerPage() {
         <button
           onClick={() => setActiveTab("syllabus")}
           className={cn(
-            "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+            "px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer",
             activeTab === "syllabus"
-              ? "border-primary text-primary"
+              ? "border-primary text-primary font-bold"
               : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
@@ -267,9 +267,9 @@ function ExamPlannerPage() {
         <button
           onClick={() => setActiveTab("pyqs")}
           className={cn(
-            "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+            "px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer",
             activeTab === "pyqs"
-              ? "border-primary text-primary"
+              ? "border-primary text-primary font-bold"
               : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
@@ -278,9 +278,9 @@ function ExamPlannerPage() {
         <button
           onClick={() => setActiveTab("plan")}
           className={cn(
-            "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+            "px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer",
             activeTab === "plan"
-              ? "border-primary text-primary"
+              ? "border-primary text-primary font-bold"
               : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
@@ -336,10 +336,10 @@ function ExamPlannerPage() {
               <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Mastery Breakdown
               </span>
-              <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="text-success font-medium">✓ {topics_mastered_count} Mastered</span>
-                <span className="text-warning font-medium">~ {topics_improving_count} Improving</span>
-                <span className="text-destructive font-medium">! {topics_attention_count} Needs Work</span>
+              <div className="mt-3 flex items-center justify-between text-xs font-semibold">
+                <span className="text-emerald-700 dark:text-success">✓ {topics_mastered_count} Mastered</span>
+                <span className="text-amber-700 dark:text-warning">~ {topics_improving_count} Improving</span>
+                <span className="text-rose-700 dark:text-destructive">! {topics_attention_count} Needs Work</span>
               </div>
               <div className="mt-3 flex h-2 w-full overflow-hidden rounded-full bg-secondary">
                 <div
@@ -608,77 +608,137 @@ function ExamPlannerPage() {
             </div>
           </div>
 
-          {/* Topics Table */}
-          <div className="surface overflow-hidden border border-border">
+          {/* Desktop Table View */}
+          <div className="surface overflow-hidden border border-border hidden md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead className="bg-secondary/50 text-xs font-semibold text-muted-foreground uppercase border-b border-border">
                   <tr>
                     <th className="py-3 px-4 w-12">Master</th>
                     <th className="py-3 px-4">Topic & Unit</th>
-                    <th className="py-3 px-4">Priority & Recurrence</th>
+                    <th className="py-3 px-4">Status & Priority</th>
                     <th className="py-3 px-4">Evidence Basis</th>
                     <th className="py-3 px-4 w-32">Mastery</th>
                     <th className="py-3 px-4 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filteredTopics.map((t) => (
-                    <tr key={t.topic} className={cn("hover:bg-secondary/30 transition-colors", t.selected && "bg-primary/5")}>
-                      <td className="py-3.5 px-4 align-top">
-                        <input
-                          type="checkbox"
-                          checked={t.selected}
-                          onChange={() => handleToggleTopic(t.topic, t.selected)}
-                          className="size-4 rounded border-border text-primary focus:ring-primary cursor-pointer mt-1"
-                        />
-                      </td>
-                      <td className="py-3.5 px-4 align-top">
-                        <div className="flex items-center gap-2">
+                  {filteredTopics.map((t) => {
+                    const isCurrentlyStudying = study_now?.topic.toLowerCase() === t.topic.toLowerCase();
+                    return (
+                      <tr key={t.topic} className={cn("hover:bg-secondary/30 transition-colors", t.selected && "bg-primary/5")}>
+                        <td className="py-3.5 px-4 align-top">
+                          <input
+                            type="checkbox"
+                            checked={t.selected}
+                            onChange={() => handleToggleTopic(t.topic, t.selected)}
+                            className="size-4.5 rounded border-border text-primary focus:ring-primary cursor-pointer mt-1"
+                            aria-label={`Select ${t.topic} for mastery`}
+                          />
+                        </td>
+                        <td className="py-3.5 px-4 align-top">
                           <p className="font-bold text-foreground">{t.topic}</p>
-                          {t.selected && (
-                            <Badge variant="outline" className="text-xs border-primary/40 text-primary py-0 px-1.5">
-                              Target
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">{t.unit_name}</p>
-                      </td>
-                      <td className="py-3.5 px-4 align-top space-y-1">
-                        <div>
-                          <PriorityBadge priority={t.priority} />
-                        </div>
-                        {has_pyq_data ? (
-                          <div>
-                            <RepeatBadge pattern={t.repeat_pattern} years={t.years_appeared} />
+                          <p className="text-xs text-muted-foreground">{t.unit_name}</p>
+                        </td>
+                        <td className="py-3.5 px-4 align-top space-y-1.5">
+                          <TopicStatusChip
+                            selected={t.selected}
+                            isCurrentlyStudying={isCurrentlyStudying}
+                            mastery={t.mastery}
+                          />
+                          <div className="flex items-center gap-1.5">
+                            <PriorityBadge priority={t.priority} />
+                            {has_pyq_data && <RepeatBadge pattern={t.repeat_pattern} years={t.years_appeared} />}
                           </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">Syllabus Structure</span>
-                        )}
-                      </td>
-                      <td className="py-3.5 px-4 align-top text-xs text-muted-foreground max-w-xs">
-                        {t.evidence.map((ev, i) => (
-                          <p key={i} className="mb-0.5">• {ev}</p>
-                        ))}
-                      </td>
-                      <td className="py-3.5 px-4 align-top">
-                        <div className="flex items-center justify-between text-xs mb-1 font-medium">
-                          <span>{t.mastery}%</span>
-                        </div>
-                        <MasteryBar value={t.mastery} />
-                      </td>
-                      <td className="py-3.5 px-4 align-top text-right">
-                        <Button size="sm" variant="outline" asChild>
-                          <Link to="/socratic" search={{ topic: t.topic }}>
-                            <Sparkles className="size-3 mr-1" /> Practice
-                          </Link>
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="py-3.5 px-4 align-top text-xs text-muted-foreground max-w-xs">
+                          {t.evidence.map((ev, i) => (
+                            <p key={i} className="mb-0.5">• {ev}</p>
+                          ))}
+                        </td>
+                        <td className="py-3.5 px-4 align-top">
+                          <div className="flex items-center justify-between text-xs mb-1 font-semibold text-foreground">
+                            <span>{t.mastery}%</span>
+                          </div>
+                          <MasteryBar value={t.mastery} />
+                        </td>
+                        <td className="py-3.5 px-4 align-top text-right">
+                          <Button size="sm" variant="outline" asChild className="btn-lift">
+                            <Link to="/socratic" search={{ topic: t.topic }}>
+                              <Sparkles className="size-3.5 mr-1 text-primary" /> Socratic
+                            </Link>
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Mobile Card View (No Horizontal Overflow) */}
+          <div className="grid gap-3.5 md:hidden">
+            {filteredTopics.map((t) => {
+              const isCurrentlyStudying = study_now?.topic.toLowerCase() === t.topic.toLowerCase();
+              return (
+                <div
+                  key={t.topic}
+                  className={cn(
+                    "surface p-4 space-y-3 transition-all",
+                    t.selected && "border-primary/40 bg-primary/5",
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={t.selected}
+                        onChange={() => handleToggleTopic(t.topic, t.selected)}
+                        className="size-5 rounded border-border text-primary focus:ring-primary cursor-pointer mt-0.5"
+                        aria-label={`Select ${t.topic} for mastery`}
+                      />
+                      <div>
+                        <p className="font-bold text-base text-foreground">{t.topic}</p>
+                        <p className="text-xs text-muted-foreground">{t.unit_name}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <TopicStatusChip
+                      selected={t.selected}
+                      isCurrentlyStudying={isCurrentlyStudying}
+                      mastery={t.mastery}
+                    />
+                    <PriorityBadge priority={t.priority} />
+                    {has_pyq_data && <RepeatBadge pattern={t.repeat_pattern} years={t.years_appeared} />}
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs font-semibold">
+                      <span className="text-muted-foreground">Mastery</span>
+                      <span>{t.mastery}%</span>
+                    </div>
+                    <MasteryBar value={t.mastery} />
+                  </div>
+
+                  {t.evidence.length > 0 && (
+                    <p className="text-xs text-muted-foreground italic line-clamp-2 bg-muted/40 p-2 rounded-lg">
+                      "{t.evidence[0]}"
+                    </p>
+                  )}
+
+                  <div className="pt-2 border-t border-border flex justify-end">
+                    <Button size="sm" variant="outline" asChild className="w-full btn-lift">
+                      <Link to="/socratic" search={{ topic: t.topic }}>
+                        <Sparkles className="size-3.5 mr-1 text-primary" /> Practice Socratic Challenge
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -837,6 +897,50 @@ function ExamPlannerPage() {
 
 // --- Helper UI Components ---
 
+function TopicStatusChip({
+  selected,
+  isCurrentlyStudying,
+  mastery,
+}: {
+  selected: boolean;
+  isCurrentlyStudying: boolean;
+  mastery: number;
+}) {
+  if (isCurrentlyStudying) {
+    return (
+      <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary text-[11px] font-bold">
+        ⚡ Currently Studying
+      </Badge>
+    );
+  }
+  if (mastery >= 80) {
+    return (
+      <Badge variant="outline" className="border-success/40 bg-success/10 text-success text-[11px] font-semibold">
+        ✓ Mastered
+      </Badge>
+    );
+  }
+  if (mastery < 60) {
+    return (
+      <Badge variant="outline" className="border-destructive/40 bg-destructive/10 text-destructive text-[11px] font-semibold">
+        ! Needs Revision
+      </Badge>
+    );
+  }
+  if (selected) {
+    return (
+      <Badge variant="outline" className="border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[11px] font-semibold">
+        ★ Selected for Mastery
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="outline" className="border-border text-muted-foreground text-[11px]">
+      Curriculum Topic
+    </Badge>
+  );
+}
+
 function PriorityBadge({ priority }: { priority: PriorityTier }) {
   if (priority === "high") {
     return (
@@ -885,9 +989,18 @@ function RepeatBadge({ pattern, years }: { pattern: RepeatPattern; years: number
 }
 
 function ActivityIcon({ type }: { type: string }) {
-  if (type === "concept_review") return <BookOpen className="size-4 text-primary shrink-0 mt-0.5" />;
-  if (type === "pyq_practice") return <FileText className="size-4 text-amber-500 shrink-0 mt-0.5" />;
-  if (type === "socratic_challenge") return <Sparkles className="size-4 text-emerald-500 shrink-0 mt-0.5" />;
+  if (type === "concept_learning" || type === "concept_review") {
+    return <BookOpen className="size-4 text-primary shrink-0 mt-0.5" />;
+  }
+  if (type === "pyq_practice") {
+    return <FileText className="size-4 text-amber-500 shrink-0 mt-0.5" />;
+  }
+  if (type === "socratic_challenge") {
+    return <Sparkles className="size-4 text-emerald-500 shrink-0 mt-0.5" />;
+  }
+  if (type === "revision") {
+    return <RefreshCw className="size-4 text-purple-500 shrink-0 mt-0.5" />;
+  }
   return <Target className="size-4 text-muted-foreground shrink-0 mt-0.5" />;
 }
 

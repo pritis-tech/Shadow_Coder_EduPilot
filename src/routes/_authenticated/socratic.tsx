@@ -324,15 +324,15 @@ function SocraticArenaPage() {
 
         {/* Active Misconception Warning Banner if present */}
         {activeMisconceptions.length > 0 && (
-          <div className="mt-4 flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4 text-warning-foreground">
-            <AlertTriangle className="size-5 shrink-0 text-warning" />
+          <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/80 p-4 text-amber-900 dark:border-warning/40 dark:bg-warning/10 dark:text-warning-foreground">
+            <AlertTriangle className="size-5 shrink-0 text-amber-600 dark:text-warning" />
             <div className="text-sm">
-              <span className="font-semibold">Active Misconception Detected: </span>
-              <span>{activeMisconceptions[0]?.misconception}</span>
-              <span className="ml-2 rounded-sm bg-warning/20 px-1.5 py-0.5 text-xs font-mono">
+              <span className="font-bold">Active Misconception Detected: </span>
+              <span className="font-semibold">{activeMisconceptions[0]?.misconception}</span>
+              <span className="ml-2 rounded-md border border-amber-300/80 bg-amber-100/80 px-2 py-0.5 text-xs font-mono font-semibold text-amber-900 dark:border-transparent dark:bg-warning/20 dark:text-warning-foreground">
                 {activeMisconceptions[0]?.category}
               </span>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-amber-800/90 dark:text-muted-foreground">
                 EduPilot has adapted the Socratic interrogation to target and resolve this misconception.
               </p>
             </div>
@@ -373,10 +373,10 @@ function SocraticArenaPage() {
                   disabled={step !== "question"}
                   onClick={() => setSelectedOption(i)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl border p-4 text-left text-sm transition-all",
+                    "flex items-center gap-3 rounded-xl border p-4 text-left text-sm transition-all cursor-pointer",
                     selectedOption === i
-                      ? "border-primary bg-primary/10 font-medium text-foreground ring-1 ring-primary"
-                      : "border-border hover:bg-muted/60 text-muted-foreground hover:text-foreground",
+                      ? "border-primary bg-primary/10 font-semibold text-foreground ring-1 ring-primary"
+                      : "border-border bg-card hover:bg-secondary text-foreground hover:border-slate-300 dark:hover:border-slate-700",
                     step !== "question" && "cursor-default",
                   )}
                 >
@@ -390,7 +390,7 @@ function SocraticArenaPage() {
                   >
                     {String.fromCharCode(65 + i)}
                   </span>
-                  <span>{opt}</span>
+                  <span className="font-medium text-foreground">{opt}</span>
                 </button>
               ))}
             </div>
@@ -398,7 +398,7 @@ function SocraticArenaPage() {
             {/* Step 1.2: Student Reasoning Textarea */}
             <div className="space-y-2 pt-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold">
+                <label className="text-sm font-semibold text-foreground">
                   Why is this correct? Explain your reasoning:
                 </label>
                 <span className="text-xs text-muted-foreground">Required for Socratic analysis</span>
@@ -447,12 +447,12 @@ function SocraticArenaPage() {
                 <Badge
                   variant="outline"
                   className={cn(
-                    "font-semibold uppercase tracking-wider text-xs",
+                    "font-bold uppercase tracking-wider text-xs",
                     initialAnalysis.answer_status === "correct"
-                      ? "border-success/40 bg-success/10 text-success"
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-success/40 dark:bg-success/10 dark:text-success"
                       : initialAnalysis.answer_status === "partially_correct"
-                        ? "border-warning/40 bg-warning/10 text-warning-foreground"
-                        : "border-destructive/40 bg-destructive/10 text-destructive",
+                        ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-warning/40 dark:bg-warning/10 dark:text-warning-foreground"
+                        : "border-rose-300 bg-rose-50 text-rose-800 dark:border-destructive/40 dark:bg-destructive/10 dark:text-destructive",
                   )}
                 >
                   Answer: {initialAnalysis.answer_status.replace("_", " ")}
@@ -462,7 +462,7 @@ function SocraticArenaPage() {
 
             {/* AI Decision Diagnostics Grid */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-border bg-muted/40 p-4">
+              <div className="rounded-xl border border-border bg-secondary/50 p-4">
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>Reasoning Quality</span>
                   <span className="font-semibold text-foreground">{initialAnalysis.reasoning_quality}%</span>
@@ -472,7 +472,7 @@ function SocraticArenaPage() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-muted/40 p-4">
+              <div className="rounded-xl border border-border bg-secondary/50 p-4">
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>Conceptual Understanding</span>
                   <span className="font-semibold text-foreground">{initialAnalysis.conceptual_understanding}%</span>
@@ -485,32 +485,32 @@ function SocraticArenaPage() {
 
             {/* Misconception detected banner if any */}
             {initialAnalysis.misconception_detected && initialAnalysis.misconception && (
-              <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-destructive">
-                <div className="flex items-center gap-2 font-semibold">
-                  <AlertTriangle className="size-4" />
+              <div className="rounded-xl border border-rose-300 bg-rose-50/80 p-4 text-rose-900 dark:border-destructive/40 dark:bg-destructive/10 dark:text-destructive">
+                <div className="flex items-center gap-2 font-bold">
+                  <AlertTriangle className="size-4 text-rose-600 dark:text-destructive" />
                   <span>Misconception Identified: {initialAnalysis.misconception}</span>
                 </div>
-                <p className="mt-1 text-xs text-destructive/80">
+                <p className="mt-1 text-xs text-rose-800 dark:text-destructive/80">
                   Category: {initialAnalysis.misconception_category} · Severity: {initialAnalysis.misconception_severity}
                 </p>
               </div>
             )}
 
             {/* Feedback Commentary */}
-            <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm leading-relaxed">
-              <span className="font-semibold text-foreground">AI Assessment: </span>
-              <span className="text-muted-foreground">{initialAnalysis.feedback}</span>
+            <div className="rounded-xl border border-border bg-secondary/40 p-4 text-sm leading-relaxed">
+              <span className="font-bold text-foreground">AI Assessment: </span>
+              <span className="text-secondary-foreground">{initialAnalysis.feedback}</span>
             </div>
 
             {/* The Socratic Challenge Card */}
-            <div className="rounded-xl border-2 border-primary/60 bg-primary/5 p-6 space-y-3">
+            <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-card to-cyan-500/10 p-6 space-y-3 shadow-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Brain className="size-5 text-primary" />
                   <span className="font-bold text-foreground">Socratic Challenge</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs capitalize font-medium">
+                  <Badge variant="outline" className="text-xs capitalize font-medium border-border bg-card">
                     Type: {initialAnalysis.challenge_type.replace("_", " ")}
                   </Badge>
                   <Badge
@@ -518,10 +518,10 @@ function SocraticArenaPage() {
                     className={cn(
                       "text-xs capitalize font-semibold",
                       initialAnalysis.challenge_difficulty === "hard"
-                        ? "border-destructive/40 text-destructive bg-destructive/10"
+                        ? "border-rose-300 text-rose-800 bg-rose-50 dark:border-destructive/40 dark:text-destructive dark:bg-destructive/10"
                         : initialAnalysis.challenge_difficulty === "medium"
-                          ? "border-warning/40 text-warning-foreground bg-warning/10"
-                          : "border-success/40 text-success bg-success/10",
+                          ? "border-amber-300 text-amber-800 bg-amber-50 dark:border-warning/40 dark:text-warning-foreground dark:bg-warning/10"
+                          : "border-emerald-300 text-emerald-800 bg-emerald-50 dark:border-success/40 dark:text-success dark:bg-success/10",
                     )}
                   >
                     Difficulty: {initialAnalysis.challenge_difficulty}
@@ -529,7 +529,7 @@ function SocraticArenaPage() {
                 </div>
               </div>
 
-              <p className="text-base font-semibold text-foreground leading-relaxed">
+              <p className="text-base font-bold text-foreground leading-relaxed">
                 "{initialAnalysis.challenge}"
               </p>
             </div>
@@ -539,7 +539,7 @@ function SocraticArenaPage() {
               <div className="space-y-4 pt-2">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-semibold">
+                    <label className="text-sm font-semibold text-foreground">
                       Step 3 · Defend your reasoning against the challenge:
                     </label>
                     <span className="text-xs text-muted-foreground">Address the edge case / comparison</span>
@@ -578,7 +578,7 @@ function SocraticArenaPage() {
 
         {/* Phase 4: Defense Evaluation & Recalibrated Mastery Result */}
         {defenseEvaluation && activeSession && (
-          <section className="surface space-y-6 border-success/40 p-6 sm:p-8">
+          <section className="surface space-y-6 border-emerald-300/80 dark:border-success/40 p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
               <span className="rounded-full bg-success/15 px-3 py-1 text-xs font-semibold text-success">
                 Step 4 · Defense Evaluation & Recalibrated Mastery
